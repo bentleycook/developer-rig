@@ -5,7 +5,7 @@ import classNames = require('classnames');
 import { fetchChannelConfigurationSegments, fetchUser } from '../util/api';
 
 export interface Props {
-  configurations?: Configurations;
+  configurations: Configurations;
   rigProject: RigProject,
   userId: string;
   authToken: string;
@@ -29,10 +29,10 @@ interface State {
 
 export class ConfigurationServiceView extends React.Component<Props, State>{
   public state: State = {
-    version: this.props.configurations && this.props.configurations.globalSegment && this.props.configurations.globalSegment.version || '',
+    version: this.props.configurations.globalSegment && this.props.configurations.globalSegment.version || '',
     configurationType: ConfigurationType.Global,
     channelId: '',
-    configuration: this.props.configurations && this.props.configurations.globalSegment && this.props.configurations.globalSegment.content || '',
+    configuration: this.props.configurations.globalSegment && this.props.configurations.globalSegment.content || '',
     fetchStatus: '',
   };
 

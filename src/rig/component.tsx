@@ -205,7 +205,6 @@ export class RigComponent extends React.Component<Props, State> {
 
   public render() {
     const { configurations, currentProject } = this.state;
-    const { globalSegment: { content: configurationServiceViewKey = '' } = {} } = configurations || {};
     return (
       <div className="rig-container">
         <RigNav
@@ -232,8 +231,7 @@ export class RigComponent extends React.Component<Props, State> {
                   onChange={this.updateProject}
                   refreshViews={this.refreshViews}
                 />}
-                {this.state.selectedView === NavItem.ConfigurationService && <ConfigurationServiceView
-                  key={`ConfigurationServiceView${configurationServiceViewKey}`}
+                {configurations && this.state.selectedView === NavItem.ConfigurationService && <ConfigurationServiceView
                   authToken={this.props.session.authToken}
                   configurations={configurations}
                   rigProject={currentProject}
