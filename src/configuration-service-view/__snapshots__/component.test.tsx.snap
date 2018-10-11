@@ -157,6 +157,12 @@ ShallowWrapper {
           >
                     Save
           </button>
+          <button
+                    className="configuration-service-view__button"
+                    onClick={[Function]}
+          >
+                    Cancel
+          </button>
 </div>,
         <div
           className="configuration-service-view__vertical-bar"
@@ -283,6 +289,12 @@ ShallowWrapper {
               onClick={[Function]}
 >
               Save
+</button>,
+            <button
+              className="configuration-service-view__button"
+              onClick={[Function]}
+>
+              Cancel
 </button>,
           ],
           "className": "configuration-service-view__section configuration-service-view__section--left",
@@ -526,6 +538,19 @@ ShallowWrapper {
             },
             "ref": null,
             "rendered": "Save",
+            "type": "button",
+          },
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "host",
+            "props": Object {
+              "children": "Cancel",
+              "className": "configuration-service-view__button",
+              "onClick": [Function],
+            },
+            "ref": null,
+            "rendered": "Cancel",
             "type": "button",
           },
         ],
@@ -775,6 +800,12 @@ ShallowWrapper {
             >
                         Save
             </button>
+            <button
+                        className="configuration-service-view__button"
+                        onClick={[Function]}
+            >
+                        Cancel
+            </button>
 </div>,
           <div
             className="configuration-service-view__vertical-bar"
@@ -901,6 +932,12 @@ ShallowWrapper {
                 onClick={[Function]}
 >
                 Save
+</button>,
+              <button
+                className="configuration-service-view__button"
+                onClick={[Function]}
+>
+                Cancel
 </button>,
             ],
             "className": "configuration-service-view__section configuration-service-view__section--left",
@@ -1144,6 +1181,19 @@ ShallowWrapper {
               },
               "ref": null,
               "rendered": "Save",
+              "type": "button",
+            },
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "host",
+              "props": Object {
+                "children": "Cancel",
+                "className": "configuration-service-view__button",
+                "onClick": [Function],
+              },
+              "ref": null,
+              "rendered": "Cancel",
               "type": "button",
             },
           ],

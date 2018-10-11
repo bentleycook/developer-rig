@@ -86,6 +86,19 @@ describe('<ConfigurationServiceView />', () => {
     expect(instance.props.saveHandler).toHaveBeenCalledTimes(1);
   });
 
+  it('invokes cancel', () => {
+    const { wrapper } = setupShallow();
+    const instance = wrapper.instance() as ConfigurationServiceView;
+    ['configuration', 'version'].forEach((name) => {
+      const selector = name === 'configuration' ? 'textarea' : `input[name="${name}"]`;
+      wrapper.find(selector).simulate('change', { currentTarget: { name, value: '{}' } });
+    });
+    wrapper.update();
+    wrapper.find('.configuration-service-view__button').at(1).simulate('click');
+    wrapper.update();
+    expect(instance.state.configuration).toEqual(instance.props.configurations.globalSegment.content);
+  });
+
   it('opens documentation window', () => {
     globalAny.open = jest.fn();
     const { wrapper } = setupShallow();
@@ -96,7 +109,7 @@ describe('<ConfigurationServiceView />', () => {
   it('opens tutorial window', () => {
     globalAny.open = jest.fn();
     const { wrapper } = setupShallow();
-    wrapper.find('.configuration-service-view__button').at(1).simulate('click');
+    wrapper.find('.configuration-service-view__button').at(2).simulate('click');
     expect(globalAny.open).toHaveBeenCalledWith('https://www.twitch.tv/videos/320483709', 'developer-rig-help');
   });
 });

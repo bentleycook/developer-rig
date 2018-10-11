@@ -24,6 +24,8 @@ interface State {
   channelId: string;
   configuration: string;
   fetchStatus: string;
+  lastConfiguration: string;
+  lastVersion: string;
   [key: string]: ConfigurationType | string;
 }
 
@@ -34,6 +36,8 @@ export class ConfigurationServiceView extends React.Component<Props, State>{
     channelId: '',
     configuration: this.props.configurations.globalSegment && this.props.configurations.globalSegment.content || '',
     fetchStatus: '',
+    lastConfiguration: '',
+    lastVersion: '',
   };
 
   private onChange = (input: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -43,7 +47,7 @@ export class ConfigurationServiceView extends React.Component<Props, State>{
 
   private onChangeConfigurationType = (input: React.FormEvent<HTMLSelectElement>) => {
     const { name, value } = input.currentTarget;
-    this.setState({ [name]: value });
+    this.setState({ [name]: value, lastConfiguration: '', lastVersion: '' });
     if (value === ConfigurationType.Global) {
       const { content, version } = this.props.configurations.globalSegment;
       this.setState({ configuration: content, version });
@@ -74,7 +78,7 @@ export class ConfigurationServiceView extends React.Component<Props, State>{
         const segment = this.state.configurationType === ConfigurationType.Broadcaster ?
           segmentMap.broadcaster : segmentMap.developer;
         const { content, version } = segment || { content: '', version: '' };
-        this.setState({ configuration: content, version });
+        this.setState({ configuration: content, lastConfiguration: content, version, lastVersion: version });
         this.setState({ fetchStatus: '' });
       } catch (ex) {
         this.setState({ fetchStatus: ex.message });
@@ -97,6 +101,13 @@ export class ConfigurationServiceView extends React.Component<Props, State>{
       const channelId = configurationType === ConfigurationType.Global ? '' : this.state.channelId;
       this.props.saveHandler(configurationType, channelId, configuration.trim(), version.trim());
     }
+  }
+
+  private cancel = () => {
+    const { configurations } = this.props;
+    const { content: configuration, version } = this.state.configurationType === ConfigurationType.Global ? configurations.globalSegment :
+      { content: this.state.lastConfiguration, version: this.state.lastVersion };
+    this.setState({ configuration, version });
   }
 
   private viewDocumentation() {
@@ -146,6 +157,7 @@ export class ConfigurationServiceView extends React.Component<Props, State>{
             <input className={versionClassName} type="text" name="version" value={this.state.version} onChange={this.onChange} />
           </label>
           <button className="configuration-service-view__button" onClick={this.save}>Save</button>
+          <button className="configuration-service-view__button" onClick={this.cancel}>Cancel</button>
         </div>
         <div className="configuration-service-view__vertical-bar" />
         <div className="configuration-service-view__section configuration-service-view__section--right">
