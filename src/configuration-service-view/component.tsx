@@ -9,7 +9,7 @@ export interface Props {
   rigProject: RigProject,
   userId: string;
   authToken: string;
-  saveHandler: (configuration: string) => void,
+  saveHandler: (segment: string, channelId: string, content: string, version: string) => void,
 }
 
 enum ConfigurationType {
@@ -93,7 +93,9 @@ export class ConfigurationServiceView extends React.Component<Props, State>{
 
   private save = () => {
     if (this.canSave()) {
-      this.props.saveHandler(this.state.configuration.trim());
+      const { configuration, configurationType, version } = this.state;
+      const channelId = configurationType === ConfigurationType.Global ? '' : this.state.channelId;
+      this.props.saveHandler(configurationType, channelId, configuration.trim(), version.trim());
     }
   }
 
@@ -143,10 +145,7 @@ export class ConfigurationServiceView extends React.Component<Props, State>{
             <div className="configuration-service-view-property__name">Version</div>
             <input className={versionClassName} type="text" name="version" value={this.state.version} onChange={this.onChange} />
           </label>
-          {false && <>
-            <button className="configuration-service-view__button" onClick={this.save}>Save</button>
-            <button className="configuration-service-view__button">Cancel</button>
-          </>}
+          <button className="configuration-service-view__button" onClick={this.save}>Save</button>
         </div>
         <div className="configuration-service-view__vertical-bar" />
         <div className="configuration-service-view__section configuration-service-view__section--right">

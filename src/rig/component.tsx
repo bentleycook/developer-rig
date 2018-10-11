@@ -6,12 +6,12 @@ import { ExtensionViewDialog, ExtensionViewDialogState } from '../extension-view
 import { EditViewDialog, EditViewProps } from '../edit-view-dialog';
 import { ProductManagementViewContainer } from '../product-management-container';
 import { fetchUserExtensionManifest } from '../util/extension';
-import { fetchUser, stopHosting, fetchGlobalConfigurationSegment, fetchChannelConfigurationSegments } from '../util/api';
+import { fetchUser, stopHosting, fetchGlobalConfigurationSegment, fetchChannelConfigurationSegments, saveConfigurationSegment } from '../util/api';
 import { NavItem } from '../constants/nav-items'
 import { OverlaySizes } from '../constants/overlay-sizes';
 import { IdentityOptions } from '../constants/identity-options';
 import { MobileSizes } from '../constants/mobile';
-import { ChannelSegments, Configurations, RigExtensionView, RigProject } from '../core/models/rig';
+import { Configurations, RigExtensionView, RigProject } from '../core/models/rig';
 import { ExtensionManifest } from '../core/models/manifest';
 import { UserSession } from '../core/models/user-session';
 import { SignInDialog } from '../sign-in-dialog';
@@ -236,7 +236,7 @@ export class RigComponent extends React.Component<Props, State> {
                   configurations={configurations}
                   rigProject={currentProject}
                   userId={this.state.userId}
-                  saveHandler={(configuration: string) => { }}
+                  saveHandler={this.saveConfiguration}
                 />}
                 {currentProject && <ExtensionViewContainer
                   key={`ExtensionViewContainer${this.state.extensionsViewContainerKey}`}
@@ -276,6 +276,10 @@ export class RigComponent extends React.Component<Props, State> {
             )}
       </div>
     );
+  }
+
+  private saveConfiguration = (segment: string, channelId: string, content: string, version: string) => {
+    saveConfigurationSegment(this.state.currentProject.manifest.id, this.state.userId, this.state.currentProject.secret, segment, channelId, content, version);
   }
 
   private refreshViews = () => {
