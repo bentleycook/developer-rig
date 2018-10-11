@@ -47,6 +47,8 @@ export class ConfigurationServiceView extends React.Component<Props, State>{
     if (value === ConfigurationType.Global) {
       const { content, version } = this.props.configurations.globalSegment;
       this.setState({ configuration: content, version });
+    } else {
+      this.setState({ configuration: '', version: '' });
     }
   }
 
