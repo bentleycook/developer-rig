@@ -95,10 +95,19 @@ export class ConfigurationServiceView extends React.Component<Props, State>{
     return true;
   }
 
-  private save = () => {
+  private save = async () => {
     if (this.canSave()) {
       const { configuration, configurationType, version } = this.state;
-      const channelId = configurationType === ConfigurationType.Global ? '' : this.state.channelId;
+      let channelId = configurationType === ConfigurationType.Global ? '' : this.state.channelId;
+      if (isNaN(Number(channelId))) {
+        // Assume it's a channel (user) name.  Get the channel ID, if any.
+        const user = await fetchUser(this.props.authToken, channelId);
+        if (user) {
+          channelId = user.id;
+        } else {
+          this.setState({ fetchStatus: `Cannot fetch user "${channelId}"` });
+        }
+      }
       this.props.saveHandler(configurationType, channelId, configuration.trim(), version.trim());
     }
   }

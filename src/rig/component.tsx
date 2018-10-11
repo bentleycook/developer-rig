@@ -279,7 +279,8 @@ export class RigComponent extends React.Component<Props, State> {
   }
 
   private saveConfiguration = (segment: string, channelId: string, content: string, version: string) => {
-    saveConfigurationSegment(this.state.currentProject.manifest.id, this.state.userId, this.state.currentProject.secret, segment, channelId, content, version);
+    const { manifest: { id: clientId }, secret } = this.state.currentProject;
+    saveConfigurationSegment(clientId, this.state.userId, secret, segment, channelId, content, version);
   }
 
   private refreshViews = () => {
