@@ -9,7 +9,7 @@ function mockApiFunctions() {
   return {
     ...original,
     fetchChannelConfigurationSegments: jest.fn().mockImplementation(() => Promise.resolve({})),
-    fetchUser: jest.fn().mockImplementation(() => Promise.resolve({ id: '999999999' })),
+    fetchUser: jest.fn().mockImplementation((_, login) => Promise.resolve(login === 'developerrig' ? { id: '999999999' } : null)),
   }
 }
 jest.mock('../util/api', () => mockApiFunctions());
@@ -46,21 +46,49 @@ describe('<ConfigurationServiceView />', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('fetches channel configuration', async () => {
-    const { wrapper } = setupShallow();
-    wrapper.find('select').simulate('change', { currentTarget: { name: 'configurationType', value: 'developer' } });
-    wrapper.find('input[name="channelId"]').simulate('change', { currentTarget: { name: 'channelId', value: 'developerrig' } });
-    wrapper.update();
-    wrapper.find('.configuration-service-view__button').first().simulate('click');
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        try {
-          expect(api.fetchUser).toHaveBeenCalledTimes(1);
-          expect(api.fetchChannelConfigurationSegments).toHaveBeenCalledTimes(1);
-          resolve();
-        } catch (ex) {
-          reject(ex.message);
-        }
+  describe('fetchChannelConfiguration', () => {
+    it('fetches by name', async () => {
+      const { wrapper } = setupShallow();
+      wrapper.find('select').simulate('change', { currentTarget: { name: 'configurationType', value: 'developer' } });
+      wrapper.find('input[name="channelId"]').simulate('change', { currentTarget: { name: 'channelId', value: 'developerrig' } });
+      wrapper.update();
+      wrapper.find('.configuration-service-view__button').first().simulate('click');
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          try {
+            expect(api.fetchUser).toHaveBeenCalled();
+            expect(api.fetchChannelConfigurationSegments).toHaveBeenCalled();
+            wrapper.update();
+            const instance = wrapper.instance() as ConfigurationServiceView;
+            expect(instance.state.fetchStatus).toEqual('');
+            resolve();
+          } catch (ex) {
+            reject(ex.message);
+          }
+        });
+      });
+    });
+
+    it('fails to fetch by unknown name', async () => {
+      const { wrapper } = setupShallow();
+      wrapper.find('select').simulate('change', { currentTarget: { name: 'configurationType', value: 'developer' } });
+      const value = 'unknown';
+      wrapper.find('input[name="channelId"]').simulate('change', { currentTarget: { name: 'channelId', value } });
+      wrapper.update();
+      wrapper.find('.configuration-service-view__button').first().simulate('click');
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          try {
+            expect(api.fetchUser).toHaveBeenCalled();
+            expect(api.fetchChannelConfigurationSegments).toHaveBeenCalled();
+            wrapper.update();
+            const instance = wrapper.instance() as ConfigurationServiceView;
+            expect(instance.state.fetchStatus).toEqual(`Cannot fetch user "${value}"`);
+            resolve();
+          } catch (ex) {
+            reject(ex.message);
+          }
+        });
       });
     });
   });
@@ -86,7 +114,25 @@ describe('<ConfigurationServiceView />', () => {
     expect(instance.props.saveHandler).toHaveBeenCalledTimes(1);
   });
 
-  it('invokes cancel', () => {
+  it('invokes cancel channel', () => {
+    const { wrapper } = setupShallow();
+    const instance = wrapper.instance() as ConfigurationServiceView;
+    const value = 'broadcaster';
+    [
+      ['configurationType', 'select'],
+      ['channelId', 'input[name="channelId"]'],
+      ['configuration', 'textarea'],
+      ['version', 'input[name="version"]'],
+    ].forEach(([name, selector]) => {
+      wrapper.find(selector).simulate('change', { currentTarget: { name, value } });
+      wrapper.update();
+    });
+    wrapper.find('.configuration-service-view__button').at(2).simulate('click');
+    wrapper.update();
+    expect(instance.state.configuration).toEqual('');
+  });
+
+  it('invokes cancel global', () => {
     const { wrapper } = setupShallow();
     const instance = wrapper.instance() as ConfigurationServiceView;
     ['configuration', 'version'].forEach((name) => {
